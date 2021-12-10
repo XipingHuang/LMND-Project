@@ -1,0 +1,55 @@
+rm(list=ls())
+library(quantmod)
+library(ggplot2)
+
+# Data of Lemonade and Plot
+lmnd <- getSymbols("LMND", src = "yahoo", from = "2020-06-28", to = "2021-11-17", auto.assign = FALSE)
+ggplot(lmnd,aes(x = index(lmnd),y = lmnd$LMND.Close)) + 
+  geom_line(color = "darkblue") + 
+  ggtitle("LMND Performance") + 
+  xlab("Date") + ylab("Return") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Data of Metlife
+MET <- getSymbols("MET", src = "yahoo", from = "2020-06-28", to = "2021-11-17", auto.assign = FALSE)
+
+# combine the plot of Lemonade and Metlife
+ggplot() + 
+  geom_line(data = lmnd, aes(x = index(lmnd), y = log(lmnd$LMND.Close), color = "LMND")) +
+  geom_line(data = MET, aes(x = index(MET), y = log(MET$MET.Close), color = "MET")) +
+  ggtitle("MET and LMND Performance") +
+  xlab('Dates') +
+  ylab('Price') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Data of SWPPX
+SWPPX <- getSymbols("SWPPX", src = "yahoo", from = "2020-06-28", to = "2021-11-17", auto.assign = FALSE)
+
+# combine the plot of Lemonade and SWPPX
+ggplot() + 
+  geom_line(data = lmnd, aes(x = index(lmnd), y = log(lmnd$LMND.Close), color = "LMND")) +
+  geom_line(data = SWPPX, aes(x = index(SWPPX), y = log(SWPPX$SWPPX.Close), color = "SWPPX")) +
+  ggtitle("SWPPX and LMND Performance") +
+  xlab('Dates') +
+  ylab('Price') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# find the daily return of Lemonade and SWPPX
+dailyReturnLmnd<-dailyReturn(lmnd)
+dailyReturnSWPPX<-dailyReturn(SWPPX)
+
+# plot the Lemonade daily performance
+ggplot(dailyReturnLmnd,aes(x = index(lmnd),y = dailyReturnLmnd$daily.returns)) + 
+  geom_line(color = "darkblue") + 
+  ggtitle("LMND Daily Performance") + 
+  xlab("Date") + ylab("Return") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# combine the daily return of Lemonade and SWPPX
+ggplot() + 
+  geom_line(data = dailyReturnLmnd, aes(x = index(dailyReturnLmnd), y = dailyReturnLmnd$daily.returns), color = "red") +
+  geom_line(data = dailyReturnSWPPX, aes(x = index(dailyReturnSWPPX), y = dailyReturnSWPPX$daily.returns), color = "blue") +
+  ggtitle("SWPPX and LMND Daily Performance") +
+  xlab('Dates') +
+  ylab('Price') +
+  theme(plot.title = element_text(hjust = 0.5))
